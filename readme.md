@@ -4,9 +4,9 @@ This is just a project for fun that may help bypass 403 using various methods.
 
 ## Features
 
-403 bypass using all HTTP methods.
-403 bypass using header injection.
-403 bypass using url suffix.
+403 bypass using all HTTP methods.\n
+403 bypass using header injection.\n
+403 bypass using url suffix.\n
 
 
 ### Dependencies
