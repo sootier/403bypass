@@ -76,8 +76,7 @@ def banner(choice,fsn):
     [99] Exit
     """
     return banner
-def askurl():
-    global url
+def askurl(url):
     url = input("Input the URL -> ")
     url = url.strip()
     if url.find('http') == -1:
@@ -90,44 +89,44 @@ def askurl():
             exit()
     banner(99, '')
     return url
+
+
 def main():
+    global url
     global workingmethods
     global workingsuffix
     global workingheaders
-    global url
     while True:
         print(banner(0 ,0))
         if url == '':
-            askurl()
+            url = askurl(url)
         else:
             pass
         ch = input("Method -> ")
         if ch == '99':
             exit()
         elif ch == '98':
-            url = askurl()
+            url = askurl(url)
         elif ch == '97':
             print_succesful()
         elif ch == '96':
-            output()
+            output(workingheaders,workingmethods,workingsuffix)
         elif ch == '0':
-            types()
-            suffix()
-            header_injection()
+            workingmethods = types(url, workingmethods)
+            workingsuffix = suffix(url, workingsuffix)
+            workingheaders = header_injection(url, workingheaders)
         elif ch == '1':
-            types()
+            workingmethods = types(url, workingmethods)
         elif ch == '2':
-            suffix()
+            workingsuffix = suffix(url, workingsuffix)
         elif ch == '3':
-            header_injection()
-        os.system("read -r -p \"Press any key to continue...\" key")
+            workingheaders = header_injection(url, workingheaders)
+        input("Press any key to continue...")
         os.system("clear")
 def getrequest(url):
     r = requests.get(url)
     return r.status_code
-def types():
-    global url
-    global workingmethods
+def types(url, workingmethods):
     methods = ['GET', 'POST', 'PUT', 'CONNECT', 'COPY', 'PATCH', 'TRACE', 'HEAD', 'UPDATE', 'LABEL', 'OPTIONS', 'MOVE', 'SEARCH', 'ARBITRARY', 'CHECKOUT', 'UNCHECKOUT', 'UNLOCK', 'MERGE', 'BASELINE-CONTROL', 'ACL' ]
     for method in methods:
         try:
@@ -151,9 +150,8 @@ def types():
             banner(1, 'F')
         else:
             banner(1, 'S')
-def suffix():
-    global url
-    global workingsuffix
+    return workingmethods
+def suffix(url, workingsuffix):
     #Directory Based Bypasses
     payloads = ["/","/*","/%2f/","/./","./.","/*/","?","??","&","#","%","%20","%09","/..;/","../","..%2f","..;/",".././","..%00/","..%0d","..%5c","..%ff/","%2e%2e%2f",".%2e/","%3f","%26","%23",".json"]
     for payload in payloads:
@@ -168,10 +166,9 @@ def suffix():
         banner(2, 'F')
     else:
         banner(2, 'S')
+    return workingsuffix
 
-def header_injection():
-    global workingheaders
-    global url
+def header_injection(url, workingheaders):
     headers = [{'X-Forwarded-For':'127.0.0.1'}, {'X-Forwarded-Host':'127.0.0.1'}, {'X-Host':'127.0.0.1'}, {'X-Custom-IP-Authorization':'127.0.0.1'}, {'X-Original-URL':'127.0.0.1'}, {'X-Originating-IP':'127.0.0.1'}, {'X-Remote-IP':'127.0.0.1'}]
     for header in headers:
         r = requests.get(url, headers = header)
@@ -184,14 +181,14 @@ def header_injection():
         banner(3, 'F')
     else:
         banner(3, 'S')
+    return workingheaders
 
 
-def output():
-    global workingheaders
-    global workingmethods
-    global workingsuffix
-    f = open('results.txt', 'w')
+
+def output(workingheaders, workingmethods, workingsuffix):
     content = workingmethods + '\n----------------------------\n\n' + workingsuffix + '\n----------------------------\n\n' + workingheaders
+
+    f = open('results.txt', 'w')
     f.write(content)
     f.close
 if __name__ == "__main__":
